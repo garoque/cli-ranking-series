@@ -9,7 +9,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/garoque/cli-conteudos/store"
+	"github.com/garoque/cli-ranking-series/store"
 	"github.com/manifoldco/promptui"
 	"github.com/spf13/cobra"
 )
@@ -34,25 +34,20 @@ type promptContent struct {
 }
 
 func createNewNote() {
-	wordPromptContent := promptContent{
-		"titulo do conteudo.",
-		"titulo do conteudo explicando q é pra por o titulo",
+	titlePromptContent := promptContent{
+		"Erro, é necessário informar o nome da série!",
+		"Informe o nome da série: ",
 	}
-	word := promptGetInput(wordPromptContent)
+	title := promptGetInput(titlePromptContent)
 
-	definitionPromptContent := promptContent{
-		"escrever sobre o conteudo.",
-		fmt.Sprintf("What is the definition of the %s?", word),
+	positionPromptContent := promptContent{
+		"Erro, é necessário selecionar a posição da série!",
+		fmt.Sprintf("Em qual posição a série '%s' estará?", title),
 	}
-	definition := promptGetInput(definitionPromptContent)
+	position := promptGetSelect(positionPromptContent)
 
-	categoryPromptContent := promptContent{
-		"Please provide a category.",
-		fmt.Sprintf("What category does %s belong to?", word),
-	}
-	category := promptGetSelect(categoryPromptContent)
-
-	store.InsertNote(word, definition, category)
+	store.Insert(title, position)
+	fmt.Println(title, position)
 }
 
 func promptGetInput(pc promptContent) string {
@@ -88,16 +83,15 @@ func promptGetInput(pc promptContent) string {
 }
 
 func promptGetSelect(pc promptContent) string {
-	items := []string{"animal", "food", "person", "object"}
+	items := []string{"1º", "2º", "3º"}
 	index := -1
 	var result string
 	var err error
 
 	for index < 0 {
-		prompt := promptui.SelectWithAdd{
-			Label:    pc.label,
-			Items:    items,
-			AddLabel: "Other",
+		prompt := promptui.Select{
+			Label: pc.label,
+			Items: items,
 		}
 
 		index, result, err = prompt.Run()
@@ -111,8 +105,6 @@ func promptGetSelect(pc promptContent) string {
 		fmt.Printf("Prompt failed %v\n", err)
 		os.Exit(1)
 	}
-
-	fmt.Printf("Input: %s\n", result)
 
 	return result
 }

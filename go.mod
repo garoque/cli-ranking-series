@@ -1,4 +1,4 @@
-module github.com/garoque/cli-conteudos
+module github.com/garoque/cli-ranking-series
 
 go 1.18
 

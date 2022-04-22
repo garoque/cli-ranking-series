@@ -13,7 +13,7 @@ var db *sql.DB
 func OpenDatabase() error {
 	var err error
 
-	db, err = sql.Open("sqlite3", "./cli-conteudos.db")
+	db, err = sql.Open("sqlite3", "./cli-ranking-series.db")
 	if err != nil {
 		return err
 	}
@@ -22,11 +22,10 @@ func OpenDatabase() error {
 }
 
 func CreateTable() {
-	query := `CREATE TABLE IF NOT EXISTS contents (
+	query := `CREATE TABLE IF NOT EXISTS series (
 		id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
 		title TEXT,
-		definition TEXT,
-		category TEXT
+		position TEXT
 	);`
 
 	_, err := db.Exec(query)
@@ -34,21 +33,21 @@ func CreateTable() {
 		log.Fatal(err.Error())
 	}
 
-	fmt.Println("created table contents")
+	fmt.Println("created table series")
 }
 
-func InsertNote(word string, definition string, category string) {
-	query := `INSERT INTO contents(title, definition, category) VALUES (?, ?, ?)`
-	_, err := db.Exec(query, word, definition, category)
+func Insert(title, position string) {
+	query := `INSERT INTO series (title, position) VALUES (?, ?)`
+	_, err := db.Exec(query, title, position)
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	log.Println("Inserted contents note successfully")
+	log.Println("Inserted successfully")
 }
 
 func DisplayAllNotes() {
-	row, err := db.Query("SELECT * FROM contents ORDER BY title")
+	row, err := db.Query("SELECT * FROM series ORDER BY position")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -56,11 +55,9 @@ func DisplayAllNotes() {
 	defer row.Close()
 
 	for row.Next() {
-		var id int
 		var title string
-		var definition string
-		var category string
-		row.Scan(&id, &title, &definition, &category)
-		log.Println("[", category, "] ", title, "—", definition)
+		var position int
+		row.Scan(&title, &position)
+		fmt.Println("[", position, "] ", title, "—", position)
 	}
 }

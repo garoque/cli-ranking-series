@@ -5,7 +5,7 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"github.com/garoque/cli-conteudos/store"
+	"github.com/garoque/cli-ranking-series/store"
 	"github.com/spf13/cobra"
 )
 
